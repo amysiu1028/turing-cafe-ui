@@ -1,16 +1,43 @@
 import './Form.css'
 import { useState } from 'react';
 
-function Form() {
+function Form({postData}) {
     const [ name, setName ] = useState("")
     const [ date, setDate ] = useState("")
     const [ time, setTime ] = useState("")
-    const [ guestNumber, setGuestNumber ] = useState("")
+    const [ number, setNumber ] = useState("")
+    const [ errorMessage, setErrorMessage ] = useState("")
+
+    function makeReservation(event) {
+        event.preventDefault()
+        if ( name === '' || date === '' || time === '' || number === '') {
+            setErrorMessage('Please fill out all input fields')
+            return;
+        }
+        const newRes = {
+            id: Date.now(),
+            name,
+            date,
+            time,
+            number
+        }
+        console.log("newRes in FORM", newRes)
+        postData(newRes)
+        clearInputs()
+    }
+
+    function clearInputs() {
+        setName('')
+        setDate('')
+        setTime('')
+        setNumber('')
+    }
 
   return (
     <form>
       {/* <label>Name:</label> */}
       <input
+      data-test='name'
       type='text'
       placeholder='Name'
       name='name'
@@ -20,6 +47,7 @@ function Form() {
 
     {/* <label>Date:</label> */}
       <input
+      data-test='date'
       type='text'
       placeholder='Date (mm/dd)'
       name='date'
@@ -29,6 +57,7 @@ function Form() {
 
     {/* <label>Time:</label> */}
       <input
+      data-test='time'
       type='text'
       placeholder='Time'
       name='time'
@@ -38,14 +67,17 @@ function Form() {
 
     {/* <label>Name:</label> */}
       <input
-      type='text'
+      data-test='guestnumber'
+      type='number'
       placeholder='Number of guests'
-      name='guestNumber'
-      value={guestNumber}
-      onChange={(e) => setGuestNumber(e.target.value)}
+      name='number'
+      value={number}
+      onChange={(e) => setNumber(e.target.value)}
       ></input>
 
-      <button>Make Reservation</button>
+    {errorMessage && <h2 className='errorMessage' data-test='errorMessage'>{errorMessage}</h2>}
+
+      <button data-test='add-button' type="button" onClick={(event) => makeReservation(event)}>Make Reservation</button>
     </form>
   )
 }
